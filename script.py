@@ -61,7 +61,7 @@ def goto_convert(link):
 
 	getcheck_id(json, link)
 
-
+# filter the id and check if it's zero. this happens when the json response status is ok or failed
 def getcheck_id(json, link):
 	id = json.split('dPageId')[1].split('\': ')[1].split(',')[0]
 	status = json.split('status')[1].split('\': u\'')[1].split('\',')[0]
@@ -93,7 +93,9 @@ def getcheck_id(json, link):
 		return -1;
 
 
-
+# usually the first json response status will be default and send the id with it
+# but after the first the rest will be will be status ok which means that you need to extract the server id
+# the server url and the id process and then send a new post with that info. Afterwards you will receive the id
 def send_payload_ok(json, link):
 
 	serverId = json.split('serverId')[1].split(': u\'')[1].split('\'')[0]
@@ -138,7 +140,6 @@ def send_payload_ok(json, link):
 	getcheck_id(jsonpostok, link)
 	# get_download_link()
 
-
 def send_payload_default(id):
 	success_url = 'https://www.onlinevideoconverter.com/success?id='+id
 	print('[+] idurl: ' + success_url)
@@ -148,7 +149,7 @@ def send_payload_default(id):
 	# mm.write_to_file("idget.html", get_with_id.text, 1)
 	get_download_link(get_with_id.text)
 
-
+# parse the download link and the song name
 def get_download_link(response):
 	get_with_id_download_soup = BeautifulSoup(response, 'html.parser')
 	#get the name of the song
@@ -164,18 +165,18 @@ def get_download_link(response):
 	download(a_download_href, song_name)
 	print('[+] Complete.\n')
 
-
+# download the song
 def download(url, name):
 	print('\n[+] Downloading...')
 	rdownload = requests.get(url, stream=True)
-	downloads = 'Downloads/'
+	downloads = 'Downloads/' ### create this folder
 	with open((downloads+name), 'wb') as f:
 		for chunk in rdownload.iter_content(chunk_size=1024):
 			if chunk: # filter out keep-alive new chunks
 				f.write(chunk)
 	return name
 
-
+# get the links of the songs on the playlist
 def parse_youtube(link):
 	get_yt_html = requests.get(link) # get the playlist yt page
 	yt_html_soup = BeautifulSoup(get_yt_html.text, "html.parser") # create a soup with it
