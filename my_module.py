@@ -1,7 +1,7 @@
-def write_to_file(name, data, num):
+def write_to_file(name, data, encoding):
     text_file = open(name, "w")
-    if num == 1:
+    if enconding == 'utf-8':
         text_file.write(data.encode('utf-8'))
-    elif num == 2:
+    elif encoding == 'string':
         text_file.write(str(data))
     text_file.close()
