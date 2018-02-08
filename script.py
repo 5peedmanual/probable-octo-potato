@@ -150,13 +150,23 @@ def send_payload_default(id):
 	get_download_link(get_with_id.text)
 
 # parse the download link and the song name
+default_count = 1
 def get_download_link(response):
+        global default_count
 	get_with_id_download_soup = BeautifulSoup(response, 'html.parser')
 	#get the name of the song
 	b = get_with_id_download_soup.find("b")
 	# print(b)
-	song_name = b.a['title']
-	print('[i] Song name: ' + song_name + '\n')
+
+        #song_name = str("'u'OBES\xd8N - Drugs").encode('utf-8')
+        try:
+            song_name = b.a['title'].encode('utf-8')
+            song_name = str(song_name)
+	    print('[i] Song name: ' + song_name + '\n')
+        except IOError as error:
+            print('[!!] Error writing song name ' + str(error))
+            song_name = 'default' + default_count
+            default_count += 1
 	# get the url of the download
 	a_download = get_with_id_download_soup.find(id="downloadq")
 	a_download_href = a_download.get('href')
@@ -208,3 +218,4 @@ if __name__ == '__main__':
 	playlist_link = args.link
 	# print(playlist_link)
 	parse_youtube(playlist_link)
+        
